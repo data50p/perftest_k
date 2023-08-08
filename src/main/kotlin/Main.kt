@@ -7,6 +7,7 @@ val fmap = mapOf(
     "f4" to ::f4,
     "f10" to ::f10,
     "f11" to ::f11,
+    "g1" to ::g1,
 )
 
 val cmap = mutableMapOf(
@@ -16,6 +17,7 @@ val cmap = mutableMapOf(
     "f4" to 0,
     "f10" to 0,
     "f11" to 0,
+    "g1" to 0,
 )
 
 class Cnt() {
@@ -53,7 +55,7 @@ fun main(args: Array<String>) {
 
     lc1 = 100_000
 
-    listOf("f1", "f1", "f1", "f1", "f1", "f10", "f11", "f2", "f1", "f3").forEach {c ->
+    listOf("f1", "f1", "f1", "f1", "f1", "f10", "f11", "f2", "f1", "f3", "g1").forEach {c ->
         var s = ""
         var mt = measureTime { s = exec(c) }
         println("It took ${cmap[c]} $s $mt")
@@ -131,6 +133,29 @@ fun f4(s: String = "f4"): String {
         cntB.inc()
     }
     return formatB(s, s1)
+}
+
+fun g1(s: String = "g1"): String {
+    var i = 0
+
+    repeat(3) {
+        var i1 = 0
+        val calc = Calc()
+
+        while (i1 < lc1) {
+            i += calc.a(1000, 1, 1000)
+            cnt.inc()
+            i1++
+        }
+    }
+
+    return formatB(s, "" + i)
+}
+
+class Calc {
+    fun a(a: Int, b: Int, c: Int) : Int {
+        return if ( c == 0 ) a + b else a + b + a(a, b, c-1)
+    }
 }
 
 fun format(s: String, s1: String): String {
