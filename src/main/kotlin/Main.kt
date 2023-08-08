@@ -57,7 +57,10 @@ fun main(args: Array<String>) {
 
     lc1 = 100_000
 
-    listOf("f1", "f1", "f1", "f1", "f1", "f10", "f11", "f2", "f1", "f3", "g1").forEach {c ->
+    val li1_1 = listOf("f1", "f1", "f1", "f1", "f1", "f10", "f11", "f2", "f1", "f3", "g1")
+    val li1_2 = listOf("f1")
+
+    li1_2.forEach {c ->
         var s = ""
         var mt = measureTime { s = exec(c) }
         println("It took ${cmap[c]} $s $mt")
@@ -138,8 +141,8 @@ fun f4(s: String = "f4"): String {
 }
 
 fun d1(s: String = "d1"): String {
-    dhry.main(arrayOf("100000000"))
-    return dhry.dhry_total_val.toString()
+    Dhry.main(arrayOf("100000000"))
+    return Dhry.dhry_total_val.toString()
 }
 
 fun g1(s: String = "g1"): String {

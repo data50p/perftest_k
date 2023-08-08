@@ -1,11 +1,11 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class dhry extends GlobalVariables implements Runnable {
+public class Dhry extends GlobalVariables {
 
     static long Number_Of_Runs = 10000000;
     static long Number_Of_Threads = 1;
-    static int Number_Of_N = 5;
+    static int Number_Of_N = 3;
 
     ExitObserver exitObserver;
 
@@ -39,8 +39,7 @@ public class dhry extends GlobalVariables implements Runnable {
 
         String_Loc_1                = "DHRYSTONE PROGRAM, 1'ST STRING";
 
-	Msg.out.println("Execution starts, " + Number_Of_Runs
-			+ " runs through Dhrystone");
+	Msg.out.println("" + Thread.currentThread().getName() + "  Execution starts, " + Number_Of_Runs + " runs through Dhrystone");
 
 	begin_time = System.currentTimeMillis();
 
@@ -86,13 +85,12 @@ public class dhry extends GlobalVariables implements Runnable {
 	total_time = end_time - begin_time;
         long dhry_val = Number_Of_Runs * 1000 / total_time;
         double dhry_valF = dhry_val / 1000000.0;
-	dhry_total_val += dhry_val;
+	dhry_total_val.set(dhry_total_val.get() + dhry_val);
 
-        Msg.out.println("total time: " + total_time + "ms");
-	Msg.out.println("Result: " + dhry_val + " dhrystone/sec. " + dhry_valF + " Mdhrystone." + "    vaxMIPS: " + (dhry_valF / 0.001757));
-
+        Msg.out.println("" + Thread.currentThread().getName() + "  total time: " + total_time + "ms");
+	Msg.out.println("" + Thread.currentThread().getName() + "  Result: " + dhry_val + " dhrystone/sec. " + dhry_valF + " Mdhrystone." + "    vaxMIPS: " + (dhry_valF / 0.001757));
     }
-	static long dhry_total_val = 0;
+	static ThreadLocal<Long> dhry_total_val = ThreadLocal.withInitial(() -> 0L);
 
     void Proc_1(Record_Type Pointer_Par_Val) {
 
@@ -289,21 +287,21 @@ public class dhry extends GlobalVariables implements Runnable {
 	    String ss = argv[0];
 	    String ssa[] = ss.split(",");
 	    if ( ssa.length == 1 ) {
-	    	dhry.Number_Of_Runs = Long.valueOf(ssa[0]).longValue();
+	    	Dhry.Number_Of_Runs = Long.valueOf(ssa[0]).longValue();
 	    } else if ( ssa.length == 2 ) {
-	    	dhry.Number_Of_Runs = Long.valueOf(ssa[0]).longValue();
-	    	dhry.Number_Of_N = (int) Long.valueOf(ssa[1]).longValue();
+	    	Dhry.Number_Of_Runs = Long.valueOf(ssa[0]).longValue();
+	    	Dhry.Number_Of_N = (int) Long.valueOf(ssa[1]).longValue();
 	    } else {
-	    	dhry.Number_Of_Runs = Long.valueOf(ssa[0]).longValue();
-	    	dhry.Number_Of_N = (int) Long.valueOf(ssa[1]).longValue();
-	    	dhry.Number_Of_Threads = Long.valueOf(ssa[2]).longValue();
+	    	Dhry.Number_Of_Runs = Long.valueOf(ssa[0]).longValue();
+	    	Dhry.Number_Of_N = (int) Long.valueOf(ssa[1]).longValue();
+	    	Dhry.Number_Of_Threads = Long.valueOf(ssa[2]).longValue();
 	    }
 	}
 
 	Msg.out.println("Dhrystone Benchmark, Version 2.1 (Language: Java)" + argv.length);
 	Msg.out.println();
 	if ( argv.length > 0 ) {
-	    Msg.out.print("Runs through the benchmark: runs(,threads) " + dhry.Number_Of_Runs + ' ' + dhry.Number_Of_Threads);
+	    Msg.out.println("Runs through the benchmark: runs(,threads) " + Dhry.Number_Of_Runs + ' ' + Dhry.Number_Of_Threads);
 	} else {
 	    Msg.out.print("Please give the number of runs through the benchmark: runs(,threads) ");
 	    Msg.out.flush();
@@ -313,14 +311,14 @@ public class dhry extends GlobalVariables implements Runnable {
 	        String ss = rdr.readLine();
 	        String ssa[] = ss.split(",");
 	        if ( ssa.length == 1 ) {
-	    	    dhry.Number_Of_Runs = Long.valueOf(ssa[0]).longValue();
+	    	    Dhry.Number_Of_Runs = Long.valueOf(ssa[0]).longValue();
 	        } else if ( ssa.length == 2 ) {
-	    	    dhry.Number_Of_Runs = Long.valueOf(ssa[0]).longValue();
-	    	    dhry.Number_Of_N = (int) Long.valueOf(ssa[1]).longValue();;
+	    	    Dhry.Number_Of_Runs = Long.valueOf(ssa[0]).longValue();
+	    	    Dhry.Number_Of_N = (int) Long.valueOf(ssa[1]).longValue();;
 	        } else {
-	    	    dhry.Number_Of_Runs = Long.valueOf(ssa[0]).longValue();
-	    	    dhry.Number_Of_N = (int) Long.valueOf(ssa[1]).longValue();
-	    	    dhry.Number_Of_Threads = Long.valueOf(ssa[2]).longValue();
+	    	    Dhry.Number_Of_Runs = Long.valueOf(ssa[0]).longValue();
+	    	    Dhry.Number_Of_N = (int) Long.valueOf(ssa[1]).longValue();
+	    	    Dhry.Number_Of_Threads = Long.valueOf(ssa[2]).longValue();
 	        }
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -328,46 +326,33 @@ public class dhry extends GlobalVariables implements Runnable {
 	    }
 	}
 
-	final Thread thA[] = new Thread[(int)dhry.Number_Of_Threads];
-	final dhry dhA[] = new dhry[(int)dhry.Number_Of_Threads];
+	final Thread thA[] = new Thread[(int) Dhry.Number_Of_Threads];
+	final Dhry dhA[] = new Dhry[(int) Dhry.Number_Of_Threads];
 
-	for(int i = 0; i < dhry.Number_Of_N; i++) {
-	    dhry_total_val = 0;
-	    for ( int thi = 0; thi < dhry.Number_Of_Threads; thi++ ) {
-		    final int thii = thi;
+	for(int i = 0; i < Dhry.Number_Of_N; i++) {
+	    dhry_total_val.set(0L);
+	    for (int thi = 0; thi < Dhry.Number_Of_Threads; thi++ ) {
+		final int thii = thi;
 		Thread th = new Thread(() -> {
-		    dhA[thii] = new dhry();
-	            dhA[thii].execute();
+		    dhA[thii] = new Dhry();
+		    System.out.println("execute:: " + Thread.currentThread().getName());
+		    dhA[thii].execute();
+		    System.out.println("execdone:: " + Thread.currentThread().getName());
 		});
-		th.start();
 		thA[thi] = th;
+		th.start();
+		System.out.println("Thread started:: " + th.getName());
 	    }
-	    for ( int thi = 0; thi < dhry.Number_Of_Threads; thi++ ) {
+	    for (int thi = 0; thi < Dhry.Number_Of_Threads; thi++ ) {
 	        try {
+		    System.out.println("Thread joining:: " + thA[thi].getName());
 		    thA[thi].join();
+		    System.out.println("Thread joined:: " + thA[thi].getName());
 		} catch (Exception ex) {
-			ex.printStackTrace();
+		    ex.printStackTrace();
 		}
-	        if (dhA[thi].exitObserver != null) {
-	            dhA[thi].exitObserver.exitNotify();
-	        }
 	    }
 	    System.out.println("--------------------- Multi drystone value: " + dhry_total_val);
         }
     }
-
-    /**
-     * java.lang.Runnable stuff
-     */
-    public void run()  {
-	execute();
-	if (exitObserver != null) {
-	    exitObserver.exitNotify();
-	}
-    }
-
-    public void setExitObserver(ExitObserver eo) {
-	exitObserver = eo;
-    }
-
 }
