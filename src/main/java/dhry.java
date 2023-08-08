@@ -89,7 +89,7 @@ public class dhry extends GlobalVariables implements Runnable {
 	dhry_total_val += dhry_val;
 
         Msg.out.println("total time: " + total_time + "ms");
-	Msg.out.println("Result: " + dhry_val + " dhrystone/sec. " + dhry_valF + " Mdhrystone.");
+	Msg.out.println("Result: " + dhry_val + " dhrystone/sec. " + dhry_valF + " Mdhrystone." + "    vaxMIPS: " + (dhry_valF / 0.001757));
 
     }
 	static long dhry_total_val = 0;
