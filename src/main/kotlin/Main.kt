@@ -7,11 +7,40 @@ val fmap = mapOf(
     "f4" to ::f4,
     "f10" to ::f10,
     "f11" to ::f11,
-    )
+)
+
+val cmap = mutableMapOf(
+    "f1" to 0,
+    "f2" to 0,
+    "f3" to 0,
+    "f4" to 0,
+    "f10" to 0,
+    "f11" to 0,
+)
+
+class Cnt() {
+    var v = 0
+    var v0 = 0
+
+    fun inc() {
+        v++
+    }
+
+    fun dif() : Int {
+        val d = v - v0
+        v0 = v
+        return d
+    }
+}
+
+var lc1 = 10
+
+var cnt = Cnt()
+var cntB = Cnt()
 
 
 fun exec(c: String) : String {
-    return fmap[c]?.invoke("" + c)!!
+    return fmap[c]?.invoke(c)!!.also { cmap[c] = if (cmap[c] != null) cmap[c]!!.plus(1) else 1 }
 }
 
 fun main(args: Array<String>) {
@@ -21,34 +50,31 @@ fun main(args: Array<String>) {
     // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
     println("Program arguments: ${args.joinToString()}")
 
-    var s = ""
+
+    lc1 = 100_000
 
     listOf("f1", "f1", "f1", "f1", "f1", "f10", "f11", "f2", "f1", "f3").forEach {c ->
+        var s = ""
         var mt = measureTime { s = exec(c) }
-        println("It took $s $mt")
+        println("It took ${cmap[c]} $s $mt")
     }
 
     lc1 = 3000
 
     listOf("f4").forEach {c ->
+        var s = ""
         var mt = measureTime { s = exec(c) }
-        println("It took $s $mt")
+        println("It took ${cmap[c]} $s $mt")
     }
 }
 
-var lc1 = 100_000
-
-var cnt0 = 0
-var cnt = 0
-var cntB0 = 0
-var cntB = 0
 
 fun f1(s: String = "f1"): String  {
     var s1 = ""
 
     (0..<lc1).forEach {
         s1 = it.toString() + s1
-        cnt++
+        cnt.inc()
     }
     return format(s, s1)
 }
@@ -58,7 +84,7 @@ fun f10(s: String = "f10"): String  {
 
     (0..<lc1).forEach {
         s1 += it.toString()
-        cnt++
+        cnt.inc()
     }
     return format(s, s1)
 }
@@ -68,7 +94,7 @@ fun f11(s: String = "f11"): String  {
 
     (0..<lc1).forEach {
         s1 += it
-        cnt++
+        cnt.inc()
     }
     return format(s, "" + s1)
 }
@@ -78,7 +104,7 @@ fun f2(s: String = "f2"): String  {
 
     for (ix in 0..<lc1) {
         s1 = ix.toString() + s1
-        cnt++
+        cnt.inc()
     }
     return format(s, s1)
 }
@@ -90,7 +116,7 @@ fun f3(s: String = "f3"): String {
     while (i < lc1) {
         s1 = i.toString() + s1
         i++
-        cnt++
+        cnt.inc()
     }
     return format(s, s1)
 }
@@ -102,22 +128,19 @@ fun f4(s: String = "f4"): String {
     while (i < lc1) {
         s1 = f3().replace(" +".toRegex(), " ") + s1
         i++
-        cntB++
+        cntB.inc()
     }
     return formatB(s, s1)
 }
 
 fun format(s: String, s1: String): String {
-    val cnt1 = cnt - cnt0
-    cnt0 = cnt
+    val cnt1 = cnt.dif()
     return pad(s, 3) + pad("" + cnt1 , 9) + " " + pad(s1.take(100), 100) + " " + s1.length
 }
 
 fun formatB(s: String, s1: String): String {
-    val cnt1 = cnt - cnt0
-    cnt0 = cnt
-    val cntB1 = cntB - cntB0
-    cntB0 = cntB
+    val cnt1 = cnt.dif()
+    val cntB1 = cntB.dif()
     return pad(s, 3) + pad("" + cntB1 , 9) + " " + pad(s1.take(100), 100) + " " + s1.length
 }
 
