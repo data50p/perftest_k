@@ -8,6 +8,7 @@ val fmap = mapOf(
     "f10" to ::f10,
     "f11" to ::f11,
     "g1" to ::g1,
+    "d1" to ::d1,
 )
 
 val cmap = mutableMapOf(
@@ -18,6 +19,7 @@ val cmap = mutableMapOf(
     "f10" to 0,
     "f11" to 0,
     "g1" to 0,
+    "d1" to 0,
 )
 
 class Cnt() {
@@ -63,7 +65,7 @@ fun main(args: Array<String>) {
 
     lc1 = 3000
 
-    listOf("f4").forEach {c ->
+    listOf("f4", "d1").forEach {c ->
         var s = ""
         var mt = measureTime { s = exec(c) }
         println("It took ${cmap[c]} $s $mt")
@@ -135,26 +137,48 @@ fun f4(s: String = "f4"): String {
     return formatB(s, s1)
 }
 
+fun d1(s: String = "d1"): String {
+    dhry.main(arrayOf("100000000"))
+    return dhry.dhry_total_val.toString()
+}
+
 fun g1(s: String = "g1"): String {
     var i = 0
+    var s1 = "";
 
-    repeat(3) {
+    repeat(1) {
         var i1 = 0
         val calc = Calc()
 
         while (i1 < lc1) {
-            i += calc.a(1000, 1, 1000)
+            s1 += calc.a_s()
             cnt.inc()
             i1++
+            i++
         }
     }
 
-    return formatB(s, "" + i)
+    return formatB(s, "" + i.toString() + "," + s1)
 }
 
 class Calc {
+    val cntCalc = Cnt()
+
+    fun a_s() : String {
+        a(1000, 1, 1000)
+        return cntCalc.v.toString()
+    }
+
     fun a(a: Int, b: Int, c: Int) : Int {
-        return if ( c == 0 ) a + b else a + b + a(a, b, c-1)
+        return if ( c == 0 ) a + b(b.toDouble(), a.toDouble()).toInt() else a + b + a(a, b, c-1)
+    }
+
+    fun b(x: Double, y: Double) : Double {
+        val v1 = x + y
+        val v2 = x * y
+        val v3 = x / (if ( y == 0.0 ) 1.0 else y)
+        cntCalc.inc()
+        return v1 + v2 - v3
     }
 }
 
