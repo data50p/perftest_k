@@ -1,5 +1,19 @@
 import kotlin.time.measureTime
 
+val fmap = mapOf(
+    "f1" to ::f1,
+    "f2" to ::f2,
+    "f3" to ::f3,
+    "f4" to ::f4,
+    "f10" to ::f10,
+    "f11" to ::f11,
+    )
+
+
+fun exec(c: String) : String {
+    return fmap[c]?.invoke("" + c)!!
+}
+
 fun main(args: Array<String>) {
     println("Hello World!")
 
@@ -9,29 +23,17 @@ fun main(args: Array<String>) {
 
     var s = ""
 
-    var mt = measureTime { s = f1() }
-    println("It took $s $mt")
-
-    mt = measureTime { s = f10() }
-    println("It took $s $mt")
-
-    mt = measureTime { s = f11() }
-    println("It took $s $mt")
-
-    mt = measureTime { s = f2() }
-    println("It took $s $mt")
-
-    mt = measureTime { s = f1() }
-    println("It took $s $mt")
-
-    mt = measureTime { s = f3() }
-    println("It took $s $mt")
+    listOf("f1", "f1", "f1", "f1", "f1", "f10", "f11", "f2", "f1", "f3").forEach {c ->
+        var mt = measureTime { s = exec(c) }
+        println("It took $s $mt")
+    }
 
     lc1 = 3000
-    mt = measureTime { s = f4() }
-    println("It took $s $mt")
 
-
+    listOf("f4").forEach {c ->
+        var mt = measureTime { s = exec(c) }
+        println("It took $s $mt")
+    }
 }
 
 var lc1 = 100_000
