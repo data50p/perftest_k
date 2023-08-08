@@ -134,18 +134,13 @@ fun f4(s: String = "f4"): String {
 }
 
 fun format(s: String, s1: String): String {
-    val cnt1 = cnt.dif()
-    return pad(s, 3) + pad("" + cnt1 , 9) + " " + pad(s1.take(100), 100) + " " + s1.length
+    return pad(s, 3) + pad("" + cnt.dif() , 9) + " " + pad(s1.take(100), 100) + " " + s1.length
 }
 
 fun formatB(s: String, s1: String): String {
-    val cnt1 = cnt.dif()
-    val cntB1 = cntB.dif()
-    return pad(s, 3) + pad("" + cntB1 , 9) + " " + pad(s1.take(100), 100) + " " + s1.length
+    return pad(s, 3) + pad("" + cntB.dif() , 9) + " " + pad(s1.take(100), 100) + " " + s1.length
 }
 
 fun pad(s: String, i: Int): String {
-    if (s.length >= i )
-        return s
-    return " ".repeat(i - s.length) + s
+    return if (s.length >= i ) s else " ".repeat(i - s.length) + s
 }
