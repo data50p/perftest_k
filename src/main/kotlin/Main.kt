@@ -1,3 +1,4 @@
+import java.util.*
 import kotlin.time.measureTime
 
 val fmap = mapOf(
@@ -47,12 +48,18 @@ fun exec(c: String) : String {
     return fmap[c]?.invoke(c)!!.also { cmap[c] = if (cmap[c] != null) cmap[c]!!.plus(1) else 1 }
 }
 
+var flags = HashMap<String, String>()
+var argl = listOf<String>()
+
 fun main(args: Array<String>) {
     println("Hello World!")
 
+    flags = flagAsMap(args)
+    argl = argAsList(args)
+
     // Try adding program arguments via Run/Debug configuration.
     // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-    println("Program arguments: ${args.joinToString()}")
+    println("Program arguments: ${flags} ${argl}")
 
 
     lc1 = 100_000
@@ -60,15 +67,23 @@ fun main(args: Array<String>) {
     val li1_1 = listOf("f1", "f1", "f1", "f1", "f1", "f10", "f11", "f2", "f1", "f3", "g1")
     val li1_2 = listOf("f1")
 
-    li1_2.forEach {c ->
+    (if ( flags.get("all") != null) li1_1 else li1_2).forEach {c ->
         var s = ""
         var mt = measureTime { s = exec(c) }
         println("It took ${cmap[c]} $s $mt")
     }
 
+    if ( flags.get("dhry") != null) {
+        listOf("d1").forEach { c ->
+            var s = ""
+            var mt = measureTime { s = exec(c) }
+            println("It took ${cmap[c]} $s $mt")
+        }
+    }
+
     lc1 = 3000
 
-    listOf("f4", "d1").forEach {c ->
+    listOf("f4").forEach {c ->
         var s = ""
         var mt = measureTime { s = exec(c) }
         println("It took ${cmap[c]} $s $mt")
@@ -195,4 +210,39 @@ fun formatB(s: String, s1: String): String {
 
 fun pad(s: String, i: Int): String {
     return if (s.length >= i ) s else " ".repeat(i - s.length) + s
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - -
+fun flagAsMap(argv: Array<String>): HashMap<String, String> {
+    val argl: MutableList<String?> = Arrays.asList(*argv)
+    val flag: HashMap<String, String> = HashMap()
+    for (i in argl.indices) {
+        val s = argl[i] as String
+        if (s.startsWith("-")) {
+            val ss = s.substring(1)
+            val ix = ss.indexOf('=')
+            if (ix != -1) {
+                val sk = ss.substring(0, ix)
+                val sv = ss.substring(ix + 1)
+                if (sv.indexOf(',') == -1) flag[sk] = sv else {
+                    val sa = sv.split(",")
+                    flag[sk] = sv
+                    flag["[SundryUtil;$sk"] = sa.toString()
+                }
+            } else {
+                flag[ss] = ""
+            }
+        }
+    }
+    return flag
+}
+
+fun argAsList(argv: Array<String>): List<String> {
+    var argl: List<String> = LinkedList()
+    for (av in argv) {
+        if (!av.startsWith("-")) {
+            argl += av
+        }
+    }
+    return argl
 }
