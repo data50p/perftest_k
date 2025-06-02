@@ -90,7 +90,7 @@ public class Dhry extends GlobalVariables {
         Msg.out.println("" + Thread.currentThread().getName() + "  total time: " + total_time + "ms");
 	Msg.out.println("" + Thread.currentThread().getName() + "  Result: " + dhry_val + " dhrystone/sec. " + dhry_valF + " Mdhrystone." + "    vaxMIPS: " + (dhry_valF / 0.001757));
     }
-	static ThreadLocal<Long> dhry_total_val = ThreadLocal.withInitial(() -> 0L);
+	public static ThreadLocal<Long> dhry_total_val = ThreadLocal.withInitial(() -> 0L);
 
     void Proc_1(Record_Type Pointer_Par_Val) {
 

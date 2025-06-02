@@ -1,4 +1,8 @@
-import java.util.*
+package main
+
+import java.util.Arrays
+import java.util.HashMap
+import java.util.LinkedList
 import kotlin.time.measureTime
 
 val fmap = mapOf(
